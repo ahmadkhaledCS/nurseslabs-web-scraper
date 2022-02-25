@@ -69,27 +69,30 @@ def click_buttons(link):
             try_to_click(button, 2)
 
 
-def add_data(_index, _number_of_questions):
+def add_data():
+    global index
+    global number_of_questions
     sheet = work_book['With feedback']
     questions = driver.find_elements(By.CLASS_NAME, 'wpProQuiz_listItem')
-
+    number_of_single_choice = 0
     for question in questions:
         text = question.find_element(By.CLASS_NAME, 'wpProQuiz_question_text')
         answers = question.find_elements(By.CLASS_NAME, 'wpProQuiz_questionListItem')
         response = question.find_element(By.CLASS_NAME, 'wpProQuiz_response')
         q = Question(text.text, [], response.text)
-        counter = 0
+        number_of_correct_answers = 0
         if len(answers) != 4:
             continue
         for answer in answers:
             text = answer.text.split('.')
             if answer.get_attribute('class') == 'wpProQuiz_questionListItem wpProQuiz_answerCorrectIncomplete':
                 q.right_answer = Answer('.'.join(text[1:]), text[0], 'correct')
-                counter += 1
+                number_of_correct_answers += 1
             else:
                 q.answers.append(Answer('.'.join(text[1:]), text[0], 'wrong'))
-        if counter == 1:
-            _index = _index + 1
+        if number_of_correct_answers == 1:
+            number_of_single_choice += 1
+            index += 1
             q.set_rationals()
             wrongs = q.answers
             sheet[f'B{index}'] = q.text
@@ -101,7 +104,8 @@ def add_data(_index, _number_of_questions):
             sheet[f'H{index}'] = wrongs[1].rational
             sheet[f'I{index}'] = wrongs[2].text
             sheet[f'J{index}'] = wrongs[2].rational
-        _number_of_questions += 1
+        number_of_questions += 1
+    print(f'added {number_of_single_choice} questions from link')
 
 
 def make_new_file(_name):
@@ -116,7 +120,7 @@ def make_new_file(_name):
 
 if __name__ == '__main__':
     main_topics = get_main_topics()
-    for topic in main_topics:
+    for topic in [main_topics[0]]:
         name = str(topic).split("/")[3]
         print(f'adding data to {name}.xlsx')
         make_new_file(name)
@@ -127,8 +131,8 @@ if __name__ == '__main__':
         for exam in get_exams_links(topic):
             print(f'working on {exam}')
             click_buttons(exam)
-            print('adding questions......')
-            add_data(index, number_of_questions)
+            print('adding single choice questions....')
+            add_data()
 
         print(f'added {number_of_questions} questions to {name}.xlsx')
         work_book.save(f'banks/{name}.xlsx')
