@@ -15,6 +15,7 @@ X_PATHS = ['//*[@id="menu-main-menu-1"]/li[2]/ul/li/a',
            '/html/body/div[1]/div/div[1]/main/article/div/div[2]/ol[1]/li/strong/strong/a', ]
 driver = webdriver.Chrome()
 driver.set_window_position(0, 0)
+# anything
 driver.set_window_size(760, 820)
 
 
