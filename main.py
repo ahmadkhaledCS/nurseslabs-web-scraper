@@ -2,6 +2,8 @@ import os
 import shutil
 import time
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from questions import Answer, Question
 import openpyxl
@@ -13,7 +15,7 @@ X_PATHS = ['//*[@id="menu-main-menu-1"]/li[2]/ul/li/a',
            '/html/body/div/div/div/main/article/div/div/ol[1]/li/a',
            '/html/body/div[1]/div/div[1]/main/article/div/div[2]/ul[1]/li/strong/a',
            '/html/body/div[1]/div/div[1]/main/article/div/div[2]/ol[1]/li/strong/strong/a', ]
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
 driver.set_window_position(0, 0)
 # anything
 driver.set_window_size(760, 820)
